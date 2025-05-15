@@ -1,0 +1,5 @@
+.env.*
+.idea
+back/node_modules
+back/generated
+front/show_picker/node_modules

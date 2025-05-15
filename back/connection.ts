@@ -1,15 +1,15 @@
-import {Pool} from 'pg'
+import { Pool } from 'pg';
 
-const ENV = process.env.PGDATABASE || 'development'
+const ENV = process.env.PGDATABASE || 'development';
 
-require('dotenv').config({path: `${__dirname}/../.env.${ENV}`})
+require('dotenv').config({ path: `${__dirname}/../.env.${ENV}` });
 
 if (!process.env.PGDATABASE) {
-    throw new Error('No PGDATABASE configured')
+    throw new Error('No PGDATABASE configured');
 } else {
-    console.log(`Connected to PGDATABASE ${process.env.PGDATABASE}`)
+    console.log(`Connected to PGDATABASE ${process.env.PGDATABASE}`);
 }
 
-const pool = new Pool()
+const pool = new Pool();
 
-export default pool
+export default pool;

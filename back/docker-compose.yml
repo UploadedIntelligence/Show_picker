@@ -1,0 +1,12 @@
+services:
+    db:
+        container_name: show_picker
+        image: postgres
+        environment:
+            POSTGRES_USER: Valentin
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: show_picker
+        ports:
+            - 6000:5432
+        expose:
+            - 5432

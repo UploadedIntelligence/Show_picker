@@ -6,6 +6,9 @@ const app = express()
 
 app.use(cors())
 app.use(express.json())
+app.get('/', (req, res) => {
+    console.log('hi')
+})
 app.post('/register', registerUser)
 app.post('/login', logUser)
 

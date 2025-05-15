@@ -24,12 +24,12 @@ function Login() {
     }
 
     return (
-        <form action={logAttempt}>
+        <form className='login' action={logAttempt}>
             <label> Email: </label>
             <input type='text' onChange={updateEmail}/>
             <label> Password: </label>
             <input type='text' onChange={updatePassword}/>
-            <button type='submit'>Submit</button>
+            <button className='submit_log_btn' type='submit'>Submit</button>
         </form>
     )
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import type { ICurrentUserContext } from './contexts/current-user-context.ts';
+import { Link } from 'react-router-dom';
 
 interface LoggedUserProps {
     setLoggedUser: React.Dispatch<React.SetStateAction<ICurrentUserContext['loggedUser'] | null>>;
@@ -39,6 +40,10 @@ function Login({ setLoggedUser }: LoggedUserProps) {
             <button className="submit_log_btn" type="submit">
                 Submit
             </button>
+            <div>Don't have an account?</div>
+            <Link to="/register">
+                <h2>Register</h2>
+            </Link>
         </form>
     );
 }

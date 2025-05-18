@@ -1,15 +1,14 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { CurrentUserContext } from './contexts/current-user-context.ts';
 
 function MainPage() {
     const currentUserContext = useContext(CurrentUserContext);
-    const [username, setUsername] = useState<string | null>(null);
-    setUsername(currentUserContext?.loggedUser?.username ?? null);
+    const username: string | undefined = currentUserContext?.loggedUser?.username;
 
     return (
         <>
-            <div>{username !== null ? `Welcome ${username}` : 'No user logged'}</div>
+            <div>{username !== null ? `Welcome ${username}` : `No user logged`}</div>
 
             <h1>Show Picker</h1>
             <Link to="/register">

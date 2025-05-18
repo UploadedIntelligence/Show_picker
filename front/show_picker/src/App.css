@@ -13,7 +13,13 @@
     display: inline-grid;
 }
 
+nav ul li {
+    display: inline
+}
 
+nav ul {
+    padding-inline-start: 0;
+}
 
 .password_strength {
     width: 100%;

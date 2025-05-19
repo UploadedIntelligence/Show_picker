@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { JwtPayload } from 'jwt-decode';
 
 const prisma = new PrismaClient();
 
@@ -28,7 +28,7 @@ async function registerUser(req: Request, res: Response) {
 
     if (user) {
         const token: string = jwt.sign({ id: user!.id, email: user!.email, username: user!.username }, process.env.JWT_SECRET!, {
-            expiresIn: '1h',
+            expiresIn: '10s',
         });
 
         res.cookie('user', token, { httpOnly: true });
@@ -50,10 +50,10 @@ async function logUser(req: Request, res: Response) {
         }
 
         const token = jwt.sign({ id: user!.id, email: user!.email, username: user!.username }, process.env.JWT_SECRET!, {
-            expiresIn: '1h',
+            expiresIn: '15s',
         });
 
-        res.cookie('user', token, { httpOnly: true });
+        res.cookie('user', token, { httpOnly: true, path: '/' });
         res.status(200).json({
             email: user.email,
             username: user.username,
@@ -66,8 +66,17 @@ async function logUser(req: Request, res: Response) {
 
 function getUser(req: Request, res: Response) {
     const user_token = req.cookies.user;
-    const user: JwtPayload = jwtDecode(user_token);
-    res.status(200).json({ user });
+    try {
+        const user: string | JwtPayload = jwt.verify(user_token, process.env.JWT_SECRET!);
+        res.status(200).json({ user });
+    } catch (e) {
+        res.status(404).json({ message: 'User token expired, please log in again' });
+    }
 }
 
-export { registerUser, logUser, getUser };
+function logOut(req: Request, res: Response) {
+    res.clearCookie('user', { path: '/' });
+    res.status(200).json({ msg: 'Logged out' });
+}
+
+export { registerUser, logUser, getUser, logOut };

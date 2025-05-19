@@ -1,0 +1,71 @@
+#root {
+    width: 100%;
+    margin: 0;
+    padding: 2rem;
+    text-align: center;
+}
+
+.login {
+    display: inline-grid;
+}
+
+.register {
+    display: inline-grid;
+}
+
+.nav_bar {
+    width: 100%;
+}
+
+form h3 {
+    margin: 0
+}
+
+nav ul {
+    padding-inline-start: 0;
+    border-top: 1px solid red;
+    border-bottom: 1px solid red;
+}
+
+nav ul li {
+    display: inline;
+    margin: 2rem;
+}
+
+.password_strength {
+    width: 100%;
+    background-color: #f0f0f0;
+    height: 5px;
+
+}
+
+.password_strength_bar {
+    width: 0;
+    height: 100%;
+    background-color: #234021;
+}
+
+.submit_reg_btn, .submit_log_btn {
+    background-color: #234021;
+    padding: 0.3em;
+    margin-top: 0.5em;
+}
+
+.submit_reg_btn:hover, .submit_log_btn:hover {
+    background-color: #536952;
+}
+
+.popup {
+    visibility: hidden;
+    padding: 0.5em;
+    background-color: #343434;
+    color: #ff8c8c;
+    text-align: center;
+    border-radius: 6px;
+    position: absolute;
+}
+
+.popup.show {
+    display: block;
+    visibility: visible;
+}

@@ -1,9 +1,7 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 
 export interface ICurrentUserContext {
-  loggedUser: { username: string; email: string; id: number } | null;
+    loggedUser: { username: string; email: string; id: number } | null;
 }
 
-export const CurrentUserContext = createContext<
-  ICurrentUserContext | undefined
->(undefined);
+export const CurrentUserContext = createContext<ICurrentUserContext | undefined>(undefined);

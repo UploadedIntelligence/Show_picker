@@ -10,6 +10,8 @@ interface LoggedUserProps {
 function Login({ setLoggedUser }: LoggedUserProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMsg, setErrMsg] = useState(null);
+    const [isVisible, setIsVisible] = useState<boolean>(false);
 
     function logAttempt() {
         axios
@@ -27,6 +29,11 @@ function Login({ setLoggedUser }: LoggedUserProps) {
             )
             .then((result) => {
                 setLoggedUser(result.data);
+                console.log(result.data, 'result data');
+            })
+            .catch((err) => {
+                setErrMsg(err.response.data);
+                setIsVisible(true);
             });
     }
 
@@ -37,12 +44,19 @@ function Login({ setLoggedUser }: LoggedUserProps) {
             <input type="text" onChange={(event) => setEmail(event.target.value)} />
             <label> Password: </label>
             <input type="text" onChange={(event) => setPassword(event.target.value)} />
-            <button className="submit_log_btn" type="submit">
+            <button className="submit_log_btn" type="submit" onBlur={() => setIsVisible(false)}>
                 Submit
             </button>
-            <div>Don't have an account?</div>
-            <Link to="/register">
-                <h2>Register</h2>
+            {errorMsg ? (
+                <div>
+                    <span id="err_msg" className={`popup ${isVisible ? 'show' : ''}`}>
+                        {errorMsg}
+                    </span>
+                </div>
+            ) : null}
+            <div>Forgot your password?</div>
+            <Link>
+                <h3>Reset password</h3>
             </Link>
         </form>
     );

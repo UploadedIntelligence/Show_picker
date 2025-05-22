@@ -1,40 +1,28 @@
-import { Link } from 'react-router-dom';
-import './nav-bar.css';
+import './nav-bar.scss';
+import { AppBar, Button, Stack, Toolbar } from '@mui/material';
 
 function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
     return (
-        <nav className="nav_bar">
-            <ul>
-                <li>
-                    <Link to="">Home</Link>
-                </li>
-                <li>
-                    <Link>Most popular</Link>
-                </li>
-                <li>
-                    <Link>User picks</Link>
-                </li>
-                {isAuthenticated ? (
-                    <>
-                        <li>
-                            <Link>Dashboard</Link>
-                        </li>
-                        <li>
-                            <Link to="logout">Log out</Link>
-                        </li>
-                    </>
-                ) : (
-                    <>
-                        <li>
-                            <Link to="register">Register</Link>
-                        </li>
-                        <li>
-                            <Link to="login">Login</Link>
-                        </li>
-                    </>
-                )}
-            </ul>
-        </nav>
+        <AppBar className="NavBar-main" position="static">
+            <Toolbar className="NavBar-toolbar" variant="dense" sx={{ display: 'inline', minHeight: 0 }}>
+                <Stack direction="row" sx={{ justifyContent: 'space-evenly' }} spacing={4}>
+                    <Button href="/">Home</Button>
+                    <Button className="NavBar-button">Most popular</Button>
+                    <Button>User picks</Button>
+                    {isAuthenticated ? (
+                        <>
+                            <Button>Profile</Button>
+                            <Button href="/logout">Log out</Button>
+                        </>
+                    ) : (
+                        <>
+                            <Button href="/register">Register</Button>
+                            <Button href="/login">Login</Button>
+                        </>
+                    )}
+                </Stack>
+            </Toolbar>
+        </AppBar>
     );
 }
 

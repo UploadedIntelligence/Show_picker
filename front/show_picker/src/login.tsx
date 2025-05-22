@@ -1,17 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import type { ICurrentUserContext } from './contexts/current-user-context.ts';
 import { Link } from 'react-router-dom';
+import { Box, Button, TextField, Typography } from '@mui/material';
 
 interface LoggedUserProps {
     setLoggedUser: React.Dispatch<React.SetStateAction<ICurrentUserContext['loggedUser'] | null>>;
 }
 
 function Login({ setLoggedUser }: LoggedUserProps) {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [errorMsg, setErrMsg] = useState(null);
+    const ref = useRef(null);
+    const [email, setEmail] = useState<string | null>(null);
+    const [password, setPassword] = useState<string | null>(null);
+    const [errorMsg, setErrMsg] = useState<string | null>(null);
     const [isVisible, setIsVisible] = useState<boolean>(false);
+    const [emailErr, setEmailErr] = useState<string | null>(null);
+
+    useEffect(() => {
+        setEmailErr(email && !/^.+@.+\..+$/.test(email) ? 'Email must be in the format text@domain.com' : null);
+    }, [email]);
 
     function logAttempt() {
         axios
@@ -38,25 +45,22 @@ function Login({ setLoggedUser }: LoggedUserProps) {
     }
 
     return (
-        <form className="login" action={logAttempt}>
-            <h2>Login</h2>
-            <label> Email: </label>
-            <input type="text" onChange={(event) => setEmail(event.target.value)} />
-            <label> Password: </label>
-            <input type="text" onChange={(event) => setPassword(event.target.value)} />
-            <button className="submit_log_btn" type="submit" onBlur={() => setIsVisible(false)}>
+        <form className="login" action={logAttempt} ref={ref}>
+            <Typography variant="h4">Login</Typography>
+            <TextField error={!!emailErr} helperText={emailErr} label="Email" onBlur={(event) => setEmail(event.target.value)} />
+            <TextField label="Password" onChange={(event) => setPassword(event.target.value)} />
+            <Button className="submit_log_btn" type="submit" onBlur={() => setIsVisible(false)} variant="contained">
                 Submit
-            </button>
+            </Button>
             {errorMsg ? (
-                <div>
-                    <span id="err_msg" className={`popup ${isVisible ? 'show' : ''}`}>
+                <Box>
+                    <Typography id="err_msg" className={`popup ${isVisible ? 'show' : ''}`}>
                         {errorMsg}
-                    </span>
-                </div>
+                    </Typography>
+                </Box>
             ) : null}
-            <div>Forgot your password?</div>
             <Link>
-                <h3>Reset password</h3>
+                <Typography variant="h6">Reset password</Typography>
             </Link>
         </form>
     );

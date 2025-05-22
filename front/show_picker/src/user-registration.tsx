@@ -1,82 +1,114 @@
-import React, {useEffect, useRef, useState} from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Button, LinearProgress, TextField, Tooltip, Typography } from '@mui/material';
 
 function UserRegistration() {
-    const [username, setUsername] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [disableButton, setDisableButton] = useState(false)
-    const strength_bar = useRef(null)
-    const password_field = useRef(null)
-    const user_field = useRef(null)
+    const [strength, setStrength] = useState(0);
 
-    const password_tooltip = 'A strong password contains:\n' +
+    const [username, setUsername] = useState<string | null>(null);
+    const [userErr, setUserErr] = useState<string | null>(null);
+
+    const [email, setEmail] = useState<string | null>(null);
+    const [emailErr, setEmailErr] = useState<string | null>(null);
+
+    const [password, setPassword] = useState<string | null>(null);
+    const [passErr, setPassErr] = useState<string | null>(null);
+
+    const [disableButton, setDisableButton] = useState(false);
+
+    const password_tooltip =
+        'A strong password contains:\n' +
         'At least 8 characters\n' +
         'One upper case and one lower case letter\n' +
         'One or more digits\n' +
-        'One or more symbols, such as #$%!'
+        'One or more symbols, such as #$%!';
 
     useEffect(() => {
-        if (/\W/.test(username)) {
-            setDisableButton(true)
-            user_field.current!.style.border = '2px solid red';
-            user_field.current!.style.outline = 'none'
-        } else {
-            setDisableButton(false)
-            user_field.current!.style.border = '';
-            user_field.current!.style.outline = ''
-        }
-
+        setUserErr(username && /\W/.test(username) ? 'Username must contain only letters and numbers' : null);
     }, [username]);
 
     useEffect(() => {
-        let strength = 0
+        setEmailErr(email && !/^[\w.-]+@[\w-]+\.[\w.-]+$/.test(email) ? 'Email must be in the format text@domain.com' : null);
+    }, [email]);
 
-        if (password.length >= 8) strength += 1;
+    useEffect(() => {
+        const regexes: Array<RegExp> = [/\S{8,}/, /[a-z]/, /[A-Z]/, /\d/, /[^\w\s]/];
 
-        if (/^(?=.*[a-z])(?=.*[A-Z]).+$/.test(password)) strength += 1;
+        if (password) {
+            const result = regexes.reduce((accum: number, curr: RegExp): number => {
+                return accum + Number(curr.test(password));
+            }, 0);
 
-        if (/\d/.test(password)) strength += 1;
-
-        if (/[^\w\s]/.test(password)) strength += 1;
-
-        if (/\s/.test(password)) {
-            setDisableButton(true)
-            password_field.current!.style.border = '2px solid red';
-            password_field.current!.style.outline = 'none'
+            if (/\s/.test(password)) {
+                setPassErr('Password must NOT contain space');
+            } else {
+                setPassErr(null);
+            }
+            setStrength(result * (100 / regexes.length));
         } else {
-            setDisableButton(false)
-            password_field.current!.style.border = ''
-            password_field.current!.style.outline = ''
+            setStrength(0);
         }
+    }, [password]);
 
-        strength_bar.current!.style.width = 25 * strength + '%'
-    }, [password])
+    useEffect(() => {
+        if (strength === 100 && !passErr && !emailErr && !userErr) {
+            setDisableButton(false);
+        } else {
+            setDisableButton(true);
+        }
+    }, [strength, passErr, emailErr, userErr]);
 
     function registerUser() {
-        axios.post('http://localhost:9000/register', {
-            username, email, password
-        }).then(user => console.log(user))
+        axios
+            .post('http://localhost:9000/register', {
+                username,
+                email,
+                password,
+            })
+            .then((user) => console.log(user));
     }
+
     return (
         <form className="register" onSubmit={registerUser}>
-            <h2>Register</h2>
-            <label> Username: </label>
-            <input className='user_field' type='text' ref={user_field} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setUsername(event.target.value)}/>
+            <Typography variant="h4">Register</Typography>
+            <TextField
+                label="Username"
+                error={!!userErr}
+                helperText={userErr}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setUsername(event.target.value)}
+            ></TextField>
 
-            <label> Email: </label>
-            <input type='text' onChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}/>
+            <TextField
+                label="Email"
+                error={!!emailErr}
+                helperText={emailErr}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
+            ></TextField>
 
-            <label> Password: </label>
-            <input className='password_field' type='text' ref={password_field} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}/>
-            <span title={password_tooltip}>ℹ️ Strength: </span>
-            <div className='password_strength'>
-                <div className='password_strength_bar' ref={strength_bar}></div>
-            </div>
+            <TextField
+                label="Password"
+                error={!!passErr}
+                helperText={passErr}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}
+            ></TextField>
 
-            <button className='submit_reg_btn' type='submit' disabled={disableButton}>Submit</button>
+            <Tooltip
+                placement="top"
+                title={password_tooltip.split('\n').map((line) => (
+                    <Typography fontSize="14px">
+                        {line}
+                        <br />
+                    </Typography>
+                ))}
+            >
+                <Typography>ℹ️ Strength: </Typography>
+            </Tooltip>
+            <LinearProgress variant="determinate" value={strength}></LinearProgress>
+            <Button type="submit" disabled={disableButton} variant="contained">
+                Submit
+            </Button>
         </form>
-    )
+    );
 }
 
-export { UserRegistration }
+export { UserRegistration };

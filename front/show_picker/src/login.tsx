@@ -1,24 +1,31 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import type { ICurrentUserContext } from './contexts/current-user-context.ts';
 import { Link } from 'react-router-dom';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Alert, Button, TextField, Typography } from '@mui/material';
+import { useForm } from 'react-hook-form';
 
 interface LoggedUserProps {
     setLoggedUser: React.Dispatch<React.SetStateAction<ICurrentUserContext['loggedUser'] | null>>;
 }
 
 function Login({ setLoggedUser }: LoggedUserProps) {
-    const ref = useRef(null);
-    const [email, setEmail] = useState<string | null>(null);
-    const [password, setPassword] = useState<string | null>(null);
+    const {
+        register,
+        watch,
+        formState: { isValid, errors },
+    } = useForm({
+        mode: 'onChange',
+        defaultValues: {
+            email: '',
+            password: '',
+        },
+    });
+
+    const email = watch('email');
+    const password = watch('password');
     const [errorMsg, setErrMsg] = useState<string | null>(null);
     const [isVisible, setIsVisible] = useState<boolean>(false);
-    const [emailErr, setEmailErr] = useState<string | null>(null);
-
-    useEffect(() => {
-        setEmailErr(email && !/^.+@.+\..+$/.test(email) ? 'Email must be in the format text@domain.com' : null);
-    }, [email]);
 
     function logAttempt() {
         axios
@@ -45,21 +52,39 @@ function Login({ setLoggedUser }: LoggedUserProps) {
     }
 
     return (
-        <form className="login" action={logAttempt} ref={ref}>
-            <Typography variant="h4">Login</Typography>
-            <TextField error={!!emailErr} helperText={emailErr} label="Email" onBlur={(event) => setEmail(event.target.value)} />
-            <TextField label="Password" onChange={(event) => setPassword(event.target.value)} />
-            <Button className="submit_log_btn" type="submit" onBlur={() => setIsVisible(false)} variant="contained">
+        <form className="login" action={logAttempt}>
+            <Typography variant="h4" sx={{ padding: 2 }}>
+                Login
+            </Typography>
+            <TextField
+                label="Email"
+                error={!!errors.email?.message}
+                helperText={errors.email?.message}
+                autoComplete="off"
+                {...register('email', { required: 'Field required' })}
+            />
+            <TextField
+                label="Password"
+                error={!!errors.password?.message}
+                helperText={errors.password?.message}
+                autoComplete="off"
+                {...register('password', { required: 'Field required' })}
+            />
+            <Button
+                className="submit_log_btn"
+                type="submit"
+                disabled={!isValid}
+                onBlur={() => setIsVisible(false)}
+                variant="contained"
+            >
                 Submit
             </Button>
-            {errorMsg ? (
-                <Box>
-                    <Typography id="err_msg" className={`popup ${isVisible ? 'show' : ''}`}>
-                        {errorMsg}
-                    </Typography>
-                </Box>
+            {isVisible ? (
+                <Alert severity="error" variant="filled">
+                    {errorMsg}
+                </Alert>
             ) : null}
-            <Link>
+            <Link to="reset">
                 <Typography variant="h6">Reset password</Typography>
             </Link>
         </form>

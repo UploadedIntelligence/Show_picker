@@ -1,20 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button, LinearProgress, TextField, Tooltip, Typography } from '@mui/material';
+import { useForm } from 'react-hook-form';
+
+type RegisterForm = {
+    username: string;
+    email: string;
+    password: string;
+};
 
 function UserRegistration() {
     const [strength, setStrength] = useState(0);
 
-    const [username, setUsername] = useState<string | null>(null);
-    const [userErr, setUserErr] = useState<string | null>(null);
+    const {
+        register,
+        trigger,
+        watch,
+        formState: { errors, dirtyFields, isValid },
+    } = useForm<RegisterForm>({
+        defaultValues: {
+            username: '',
+            email: '',
+            password: '',
+        },
+    });
 
-    const [email, setEmail] = useState<string | null>(null);
-    const [emailErr, setEmailErr] = useState<string | null>(null);
+    const username: string = watch('username');
+    const email: string = watch('email');
+    const password: string = watch('password');
 
-    const [password, setPassword] = useState<string | null>(null);
-    const [passErr, setPassErr] = useState<string | null>(null);
-
-    const [disableButton, setDisableButton] = useState(false);
+    useEffect(() => {
+        trigger(['username', 'password']);
+    }, [username, password]);
 
     const password_tooltip =
         'A strong password contains:\n' +
@@ -23,40 +40,25 @@ function UserRegistration() {
         'One or more digits\n' +
         'One or more symbols, such as #$%!';
 
-    useEffect(() => {
-        setUserErr(username && /\W/.test(username) ? 'Username must contain only letters and numbers' : null);
-    }, [username]);
-
-    useEffect(() => {
-        setEmailErr(email && !/^[\w.-]+@[\w-]+\.[\w.-]+$/.test(email) ? 'Email must be in the format text@domain.com' : null);
-    }, [email]);
-
-    useEffect(() => {
+    function passwordValidation(password: string) {
         const regexes: Array<RegExp> = [/\S{8,}/, /[a-z]/, /[A-Z]/, /\d/, /[^\w\s]/];
-
         if (password) {
             const result = regexes.reduce((accum: number, curr: RegExp): number => {
                 return accum + Number(curr.test(password));
             }, 0);
 
-            if (/\s/.test(password)) {
-                setPassErr('Password must NOT contain space');
-            } else {
-                setPassErr(null);
-            }
             setStrength(result * (100 / regexes.length));
+
+            if (/\s/.test(password)) {
+                return 'SPACE not allowed';
+            }
+
+            return true;
         } else {
             setStrength(0);
+            return false;
         }
-    }, [password]);
-
-    useEffect(() => {
-        if (strength === 100 && !passErr && !emailErr && !userErr) {
-            setDisableButton(false);
-        } else {
-            setDisableButton(true);
-        }
-    }, [strength, passErr, emailErr, userErr]);
+    }
 
     function registerUser() {
         axios
@@ -70,26 +72,46 @@ function UserRegistration() {
 
     return (
         <form className="register" onSubmit={registerUser}>
-            <Typography variant="h4">Register</Typography>
+            <Typography variant="h4" sx={{ padding: 2 }}>
+                Register
+            </Typography>
             <TextField
                 label="Username"
-                error={!!userErr}
-                helperText={userErr}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setUsername(event.target.value)}
+                error={!!errors.username && dirtyFields.username}
+                helperText={errors.username?.message}
+                {...register('username', {
+                    required: true,
+                    pattern: {
+                        value: /^\w+$/,
+                        message: 'Only letters and numbers',
+                    },
+                })}
+                autoComplete="off"
             ></TextField>
 
             <TextField
                 label="Email"
-                error={!!emailErr}
-                helperText={emailErr}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
+                error={!!errors.email?.message}
+                helperText={errors.email?.message}
+                {...register('email', {
+                    required: true,
+                    pattern: {
+                        value: /^[\w.-]+@[\w-]+\.[\w.-]+$/,
+                        message: 'Invalid email',
+                    },
+                })}
+                onBlur={() => trigger('email')}
+                autoComplete="off"
             ></TextField>
 
             <TextField
                 label="Password"
-                error={!!passErr}
-                helperText={passErr}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}
+                error={!!errors.password?.message}
+                helperText={errors.password?.message}
+                {...register('password', {
+                    required: true,
+                    validate: passwordValidation,
+                })}
             ></TextField>
 
             <Tooltip
@@ -104,7 +126,7 @@ function UserRegistration() {
                 <Typography>ℹ️ Strength: </Typography>
             </Tooltip>
             <LinearProgress variant="determinate" value={strength}></LinearProgress>
-            <Button type="submit" disabled={disableButton} variant="contained">
+            <Button type="submit" disabled={!(isValid && strength === 100)} variant="contained">
                 Submit
             </Button>
         </form>

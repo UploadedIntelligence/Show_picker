@@ -7,14 +7,18 @@ import { UserRegistration } from './user-registration.tsx';
 import axios from 'axios';
 import { CurrentUserContext, type ICurrentUserContext } from './contexts/current-user-context.ts';
 import { Logout } from './logout.tsx';
-import { Box, createTheme, Tooltip } from '@mui/material';
+import { createTheme } from '@mui/material';
 import { NavBar } from './nav-bar/nav-bar.tsx';
 import { ThemeProvider } from '@emotion/react';
+import { green } from '@mui/material/colors';
 
 function App() {
     const theme = createTheme({
         palette: {
             mode: 'dark',
+            primary: {
+                main: green[700],
+            },
         },
     });
     const [loggedUser, setLoggedUser] = useState<ICurrentUserContext['loggedUser'] | null>(null);
@@ -42,12 +46,6 @@ function App() {
         <ThemeProvider theme={theme}>
             <CurrentUserContext.Provider value={{ loggedUser }}>
                 <NavBar isAuthenticated={!!loggedUser} />
-                <Box>
-                    <Tooltip title="some more text" placement="top">
-                        <span>ℹ️ </span>
-                    </Tooltip>
-                    Some text
-                </Box>
                 <Routes>
                     <Route path="" element={<MainPage />}></Route>
                     <Route path="/login" element={<Login setLoggedUser={setLoggedUser} />} />

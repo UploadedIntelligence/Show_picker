@@ -18,7 +18,7 @@ async function registerUser(req: Request, res: Response) {
 
     const hashedPassword: string = await bcrypt.hash(password, 10);
 
-    const user: Iuser = await prisma.user.create({
+    const user: Iuser = await prisma.users.create({
         data: {
             email: email,
             username: username,
@@ -41,7 +41,7 @@ async function logUser(req: Request, res: Response) {
     const { email, password } = req.body;
 
     try {
-        const user: Iuser = await prisma.user.findUniqueOrThrow({
+        const user: Iuser = await prisma.users.findUniqueOrThrow({
             where: { email },
         });
 

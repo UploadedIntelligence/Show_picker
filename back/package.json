@@ -13,6 +13,7 @@
     "license": "ISC",
     "dependencies": {
         "@prisma/client": "^6.7.0",
+        "axios": "^1.9.0",
         "bcrypt": "^6.0.0",
         "cookie-parser": "^1.4.7",
         "cors": "^2.8.5",
@@ -23,15 +24,15 @@
         "pg": "^8.16.0"
     },
     "devDependencies": {
-        "@types/cors": "^2.8.18",
         "@types/bcrypt": "^5.0.2",
         "@types/cookie-parser": "^1.4.8",
+        "@types/cors": "^2.8.18",
+        "@types/express": "^5.0.1",
         "@types/jsonwebtoken": "^9.0.9",
         "@types/node": "^22.15.18",
-        "@types/express": "^5.0.1",
         "@types/pg": "^8.15.1",
-        "prettier": "^3.5.3",
         "dotenv-cli": "^8.0.0",
+        "prettier": "^3.5.3",
         "prisma": "^6.7.0",
         "ts-node": "^10.9.2"
     },

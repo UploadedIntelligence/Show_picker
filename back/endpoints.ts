@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { getUser, logOut, logUser, registerUser } from './controllers/users.controller';
+import { getUser, logOut, logUser, registerUser, searchIMDB } from './controllers/users.controller';
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -12,6 +12,7 @@ app.get('/user', getUser);
 app.post('/logout', logOut);
 app.post('/register', registerUser);
 app.post('/login', logUser);
+app.post('/search', searchIMDB);
 
 app.listen(process.env.APP_PORT, () => {
     console.log(`Now listening port ${process.env.APP_PORT}`);

@@ -11,6 +11,7 @@ import { createTheme } from '@mui/material';
 import { NavBar } from './nav-bar/nav-bar.tsx';
 import { ThemeProvider } from '@emotion/react';
 import { green } from '@mui/material/colors';
+import { SearchResult } from './search-result.tsx';
 
 function App() {
     const theme = createTheme({
@@ -51,6 +52,7 @@ function App() {
                     <Route path="/login" element={<Login setLoggedUser={setLoggedUser} />} />
                     <Route path="/logout" element={<Logout setLoggedUser={setLoggedUser} />} />
                     <Route path="/register" element={<UserRegistration />} />
+                    <Route path="/search" element={<SearchResult />} />
                 </Routes>
             </CurrentUserContext.Provider>
         </ThemeProvider>

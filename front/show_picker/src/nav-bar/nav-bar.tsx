@@ -3,8 +3,10 @@ import { alpha, AppBar, Button, InputBase, styled, Toolbar } from '@mui/material
 import SearchIcon from '@mui/icons-material/Search';
 import { searchShow } from '../searchShow.tsx';
 import { isString } from '../utilities/is-string.ts';
+import { useNavigate } from 'react-router-dom';
 
 function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
+    let navigate = useNavigate();
     const Search = styled('div')(({ theme }) => ({
         display: 'flex',
         backgroundColor: alpha(theme.palette.primary.dark, 0.15),
@@ -37,14 +39,14 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
         },
     }));
 
-    function submitSearch(event: React.FormEvent<HTMLFormElement>) {
+    async function submitSearch(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const form = new FormData(event.currentTarget);
         const search_input = form.get('search');
         if (isString(search_input)) {
-            searchShow(search_input);
+            const result = await searchShow(search_input);
+            navigate('/search', { state: result.data });
         }
-        console.dir(form.get('search'));
     }
 
     return (
@@ -61,7 +63,11 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
                                 submitSearch(event);
                             }}
                         >
-                            <StyledInputBase name="search" placeholder="Search…" inputProps={{ 'aria-label': 'search' }} />
+                            <StyledInputBase
+                                name="search"
+                                placeholder="Search…"
+                                inputProps={{ 'aria-label': 'search' }}
+                            />
                         </form>
                     </Search>
                     <Button className="NavBar-button">Most popular</Button>

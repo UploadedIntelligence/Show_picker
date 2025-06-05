@@ -1,15 +1,11 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import type { ICurrentUserContext } from './contexts/current-user-context.ts';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Alert, Button, TextField, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import axios from './config/client.ts';
 
-interface LoggedUserProps {
-    setLoggedUser: React.Dispatch<React.SetStateAction<ICurrentUserContext['loggedUser'] | null>>;
-}
-
-function Login({ setLoggedUser }: LoggedUserProps) {
+function Login({ onSuccessfulLogin }: { onSuccessfulLogin: () => void }) {
+    const navigate = useNavigate();
     const {
         register,
         watch,
@@ -34,16 +30,16 @@ function Login({ setLoggedUser }: LoggedUserProps) {
                 username: string;
                 id: number;
             }>(
-                'http://localhost:9000/login',
+                '/login',
                 {
                     email,
                     password,
                 },
                 { withCredentials: true },
             )
-            .then((result) => {
-                setLoggedUser(result.data);
-                console.log(result.data, 'result data');
+            .then(() => {
+                onSuccessfulLogin();
+                navigate('/');
             })
             .catch((err) => {
                 setErrMsg(err.response.data);

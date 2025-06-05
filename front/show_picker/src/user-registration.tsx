@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Button, LinearProgress, TextField, Tooltip, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import axios from './config/client.ts';
+import { Alert, Button, LinearProgress, TextField, Tooltip, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 
 type RegisterForm = {
@@ -9,8 +9,10 @@ type RegisterForm = {
     password: string;
 };
 
-function UserRegistration() {
+function UserRegistration({ onRegister }: { onRegister: () => void }) {
     const [strength, setStrength] = useState(0);
+    const [isVisible, setIsVisible] = useState(false);
+    const [registerStatus, setRegisterStatus] = useState(false);
 
     const {
         register,
@@ -52,7 +54,6 @@ function UserRegistration() {
             if (/\s/.test(password)) {
                 return 'SPACE not allowed';
             }
-
             return true;
         } else {
             setStrength(0);
@@ -60,14 +61,29 @@ function UserRegistration() {
         }
     }
 
-    function registerUser() {
+    function registerUser(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
         axios
-            .post('http://localhost:9000/register', {
-                username,
-                email,
-                password,
+            .post(
+                '/register',
+                {
+                    username,
+                    email,
+                    password,
+                },
+                { withCredentials: true },
+            )
+            .then(() => {
+                errors.root = undefined;
+                onRegister();
+                setIsVisible(true);
+                setRegisterStatus(true);
             })
-            .then((user) => console.log(user));
+            .catch((error) => {
+                errors.root = error.response.data;
+                setIsVisible(true);
+                setRegisterStatus(false);
+            });
     }
 
     return (
@@ -129,6 +145,17 @@ function UserRegistration() {
             <Button type="submit" disabled={!(isValid && strength === 100)} variant="contained">
                 Submit
             </Button>
+            {isVisible ? (
+                registerStatus ? (
+                    <Alert severity="success" variant="filled">
+                        Registration successful!
+                    </Alert>
+                ) : (
+                    <Alert severity="error" variant="filled">
+                        {errors.root}
+                    </Alert>
+                )
+            ) : null}
         </form>
     );
 }

@@ -1,9 +1,9 @@
-import './nav-bar.scss';
+import '../styles/nav-bar.scss';
 import { alpha, AppBar, Button, InputBase, styled, Toolbar } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { searchShow } from '../searchShow.tsx';
+import { searchShow } from '../utilities/searchShow.ts';
 import { isString } from '../utilities/is-string.ts';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
     let navigate = useNavigate();
@@ -28,12 +28,11 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
         '& .MuiInputBase-input': {
             padding: theme.spacing(1, 1, 1, 0),
             // vertical padding + font size from searchIcon
-            paddingLeft: `calc(1em + ${theme.spacing(3)})`,
             transition: theme.transitions.create('width'),
             [theme.breakpoints.up('sm')]: {
                 width: '12ch',
                 '&:focus': {
-                    width: '20ch',
+                    width: '14ch',
                 },
             },
         },
@@ -53,7 +52,9 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
         <AppBar className="NavBar-main" position="static">
             <Toolbar className="NavBar-toolbar" variant="dense" sx={{ display: 'inline', minHeight: 0 }}>
                 <div className="NavBar-content">
-                    <Button href="/">Home</Button>
+                    <Link to="/">
+                        <Button>Home</Button>
+                    </Link>
                     <Search>
                         <SearchIconWrapper>
                             <SearchIcon />
@@ -75,12 +76,18 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
                     {isAuthenticated ? (
                         <>
                             <Button>Profile</Button>
-                            <Button href="/logout">Log out</Button>
+                            <Link to="/logout">
+                                <Button>Log out</Button>
+                            </Link>
                         </>
                     ) : (
                         <>
-                            <Button href="/register">Register</Button>
-                            <Button href="/login">Login</Button>
+                            <Link to="/register">
+                                <Button>Register</Button>
+                            </Link>
+                            <Link to="/login">
+                                <Button>Login</Button>
+                            </Link>
                         </>
                     )}
                 </div>

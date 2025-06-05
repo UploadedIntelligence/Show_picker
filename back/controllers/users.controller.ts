@@ -19,23 +19,28 @@ async function registerUser(req: Request, res: Response) {
 
     const hashedPassword: string = await bcrypt.hash(password, 10);
 
-    const user: Iuser = await prisma.users.create({
-        data: {
-            email: email,
-            username: username,
-            password: hashedPassword,
-        },
-    });
-
-    if (user) {
-        const token: string = jwt.sign({ id: user!.id, email: user!.email, username: user!.username }, process.env.JWT_SECRET!, {
-            expiresIn: '10s',
+    try {
+        const user: Iuser = await prisma.users.create({
+            data: {
+                email: email,
+                username: username,
+                password: hashedPassword,
+            },
         });
 
+        const token: string = jwt.sign(
+            { id: user!.id, email: user!.email, username: user!.username },
+            process.env.JWT_SECRET!,
+            {
+                expiresIn: '10s',
+            },
+        );
+
         res.cookie('user', token, { httpOnly: true, path: '/' });
-        res.status(200).send({ token });
+        res.status(200).send();
+    } catch (err) {
+        res.status(400).send('Email already registered');
     }
-    res.status(204).json({ user });
 }
 
 async function logUser(req: Request, res: Response) {
@@ -50,16 +55,16 @@ async function logUser(req: Request, res: Response) {
             throw new Error('Invalid credentials');
         }
 
-        const token = jwt.sign({ id: user!.id, email: user!.email, username: user!.username }, process.env.JWT_SECRET!, {
-            expiresIn: '15s',
-        });
+        const token = jwt.sign(
+            { id: user!.id, email: user!.email, username: user!.username },
+            process.env.JWT_SECRET!,
+            {
+                expiresIn: '15s',
+            },
+        );
 
         res.cookie('user', token, { httpOnly: true, path: '/' });
-        res.status(200).json({
-            email: user.email,
-            username: user.username,
-            id: user.id,
-        });
+        res.status(200).send();
     } catch (err) {
         res.status(404).json('Invalid credentials');
     }
@@ -89,12 +94,10 @@ async function searchIMDB(req: Request, res: Response) {
             'x-rapidapi-host': `${env.parsed.IMDB_SEARCH_HOST}`,
         },
     };
-    console.log(options);
 
     try {
         const response = await axios.request(options);
         const data = response.data.d;
-        console.log(data);
         res.status(200).json(data);
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch from IMDB' });
@@ -106,4 +109,20 @@ function logOut(req: Request, res: Response) {
     res.status(200).json({ msg: 'Logged out' });
 }
 
-export { registerUser, logUser, getUser, logOut, searchIMDB };
+async function youtubeAPI(req: Request, res: Response) {
+    const env = require('dotenv').config({ path: `${__dirname}/../config/dev.env` });
+    const { search_term } = req.params;
+
+    const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
+        params: {
+            part: 'snippet',
+            q: `${search_term}`,
+            type: 'video',
+            key: env.parsed.GOOGLE_SEARCH_API,
+            relevanceLanguage: 'en',
+        },
+    });
+    res.send(response.data);
+}
+
+export { registerUser, logUser, getUser, logOut, searchIMDB, youtubeAPI };

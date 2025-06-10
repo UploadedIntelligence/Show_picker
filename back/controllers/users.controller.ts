@@ -7,6 +7,8 @@ import axios from 'axios';
 
 const prisma = new PrismaClient();
 
+const env = require('dotenv').config({ path: `${__dirname}/../config/dev.env` });
+
 interface Iuser {
     id: number;
     email: string;
@@ -81,9 +83,6 @@ function getUser(req: Request, res: Response) {
 }
 
 async function searchIMDB(req: Request, res: Response) {
-    const env = require('dotenv').config({ path: `${__dirname}/../config/dev.env` });
-
-    env.parsed.IMDB_SEARCH_KEY;
     const { search_term } = req.body;
 
     const options = {
@@ -110,7 +109,6 @@ function logOut(req: Request, res: Response) {
 }
 
 async function youtubeAPI(req: Request, res: Response) {
-    const env = require('dotenv').config({ path: `${__dirname}/../config/dev.env` });
     const { search_term } = req.params;
 
     const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
@@ -125,4 +123,30 @@ async function youtubeAPI(req: Request, res: Response) {
     res.send(response.data);
 }
 
-export { registerUser, logUser, getUser, logOut, searchIMDB, youtubeAPI };
+async function omdbAPI(req: Request, res: Response) {
+    const { show_id } = req.params;
+    const response = await axios.get('https://www.omdbapi.com/', {
+        params: {
+            apikey: env.parsed.OMDB_API_KEY,
+            i: `${show_id}`,
+            plot: 'full',
+        },
+    });
+
+    res.send(response.data);
+}
+
+async function watchMode(req: Request, res: Response) {
+    const { show_id } = req.params;
+    const response = { data: 'Changed to not run out of free requests' };
+    // const response = await axios.get(`https://api.watchmode.com/v1/title/${show_id}/sources`, {
+    //     params: {
+    //         apiKey: env.parsed.WATCHMODE_API_KEY,
+    //         regions: 'GB',
+    //     },
+    // });
+
+    res.send(response.data);
+}
+
+export { registerUser, logUser, getUser, logOut, searchIMDB, youtubeAPI, omdbAPI, watchMode };

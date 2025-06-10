@@ -1,6 +1,15 @@
 import express from 'express';
 import cors from 'cors';
-import { getUser, logOut, logUser, registerUser, searchIMDB, youtubeAPI } from './controllers/users.controller';
+import {
+    getUser,
+    logOut,
+    logUser,
+    omdbAPI,
+    registerUser,
+    searchIMDB,
+    watchMode,
+    youtubeAPI,
+} from './controllers/users.controller';
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -14,6 +23,8 @@ app.post('/register', registerUser);
 app.post('/login', logUser);
 app.post('/search', searchIMDB);
 app.get('/youtube/:search_term', youtubeAPI);
+app.get('/omdb/:show_id', omdbAPI);
+app.get('/watchmode/:show_id', watchMode);
 
 app.listen(process.env.APP_PORT, () => {
     console.log(`Now listening port ${process.env.APP_PORT}`);

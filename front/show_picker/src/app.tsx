@@ -21,7 +21,17 @@ function App() {
                 main: green[700],
             },
         },
+        components: {
+            MuiButton: {
+                styleOverrides: {
+                    root: {
+                        fontWeight: '600',
+                    },
+                },
+            },
+        },
     });
+
     const [loggedUser, setLoggedUser] = useState<ICurrentUserContext['loggedUser'] | null>(null);
 
     async function initialiseUser() {

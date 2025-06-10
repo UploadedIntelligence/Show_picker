@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import {
+    Button,
     Dialog,
     DialogContent,
     DialogContentText,
@@ -10,18 +11,38 @@ import {
     Paper,
 } from '@mui/material';
 import { useState } from 'react';
-import axios from 'axios';
+import axios from './config/client.ts';
+import { type AxiosResponse } from 'axios';
 
 export function SearchResult() {
     const location = useLocation();
     const searchResult = location.state;
     const [open, setOpen] = useState<boolean>(false);
-    const [movieTitle, setMovieTitle] = useState<string | null>(null);
+    const [showTitle, setShowTitle] = useState<string | null>(null);
+    const [showDescription, setShowDescription] = useState<string | null>(null);
     const [youtubeId, setYoutubeId] = useState<string | null>(null);
+    const [sources, setSources] = useState<string[][] | null>(null);
 
-    async function getImdbJSON(search_term: string) {
-        const youtube_response = await axios.get(`http://localhost:9000/youtube/${search_term}`);
-        setYoutubeId(youtube_response.data.items[0].id.videoId);
+    async function getImdbJSON(search_term: string, show_id: string) {
+        const show_sources: string[][] = [];
+        const youtube_response: AxiosResponse<{ items: [{ id: { videoId: string } }] }> = await axios.get(
+            `/youtube/${search_term}`,
+        );
+        const omdb_response: AxiosResponse<{ Plot: string }> = await axios.get(`/omdb/${show_id}`);
+        const watchmode_response: AxiosResponse<{ name: string; web_url: string }[]> = await axios.get(
+            `/watchmode/${show_id}`,
+        );
+        console.log(watchmode_response);
+
+        if (watchmode_response.data.length > 0) {
+            for (const source of watchmode_response.data) {
+                show_sources.push([source.name, source.web_url]);
+            }
+            setSources(show_sources);
+        }
+
+        setYoutubeId(youtube_response.data.items[0] ? youtube_response.data.items[0].id.videoId : 'N/A');
+        setShowDescription(omdb_response.data.Plot ? omdb_response.data.Plot : 'N/A');
     }
 
     // ;
@@ -48,9 +69,9 @@ export function SearchResult() {
                                       <ListItemButton
                                           key={`${result.id}`}
                                           onClick={async () => {
-                                              getImdbJSON(`${result.l} ${result.s} trailer`);
+                                              getImdbJSON(`${result.l} ${result.s} trailer`, result.id);
                                               setOpen(true);
-                                              setMovieTitle(result.l);
+                                              setShowTitle(result.l);
                                           }}
                                       >
                                           <ImageListItem>
@@ -64,34 +85,43 @@ export function SearchResult() {
                     : null}
             </ImageList>
             <Dialog
+                sx={{ borderRadius: '10px' }}
                 open={open}
                 onClose={() => {
                     setOpen(false);
                     setYoutubeId(null);
+                    setSources(null);
                 }}
             >
-                <DialogTitle>{movieTitle}</DialogTitle>
-                <DialogContentText>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem dolore exercitationem illum neque
-                    omnis repellendus voluptates. Aliquam aliquid aperiam debitis mollitia placeat possimus reiciendis
-                    sit, vel veritatis! Aliquid amet cupiditate distinctio doloremque explicabo incidunt iusto mollitia,
-                    nihil non quae, repellendus repudiandae, vero? Ad assumenda dolores ipsa quae quos repellendus
-                    veniam?
-                </DialogContentText>
-                <DialogContent>
+                <DialogTitle>{showTitle}</DialogTitle>
+                <DialogContentText sx={{ margin: '1em' }}>{showDescription}</DialogContentText>
+                <DialogContent sx={{ overflow: 'initial' }}>
                     {youtubeId ? (
                         <iframe
                             width="560"
                             height="315"
                             src={`https://www.youtube.com/embed/${youtubeId}`}
                             title="YouTube video player"
-                            frameBorder="0"
+                            style={{ border: 'none' }}
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             referrerPolicy="strict-origin-when-cross-origin"
                             allowFullScreen
                         ></iframe>
                     ) : (
                         <DialogContentText>TRAILER COULD NOT BE FOUND</DialogContentText>
+                    )}
+                    Where to watch:
+                    {sources ? (
+                        sources.map((source) => {
+                            return (
+                                <a href={source[1]}>
+                                    <br />
+                                    <Button>{source[0]}</Button>
+                                </a>
+                            );
+                        })
+                    ) : (
+                        <DialogContentText>No providers found</DialogContentText>
                     )}
                 </DialogContent>
             </Dialog>

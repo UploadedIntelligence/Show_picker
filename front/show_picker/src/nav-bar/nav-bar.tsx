@@ -4,9 +4,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import { searchShow } from '../utilities/searchShow.ts';
 import { isString } from '../utilities/is-string.ts';
 import { Link, useNavigate } from 'react-router-dom';
+import React, { useRef } from 'react';
 
 function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
-    let navigate = useNavigate();
+    const navigate = useNavigate();
+    const ref = useRef<HTMLInputElement>(null);
+
     const Search = styled('div')(({ theme }) => ({
         display: 'flex',
         backgroundColor: alpha(theme.palette.primary.dark, 0.15),
@@ -24,7 +27,6 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
 
     const StyledInputBase = styled(InputBase)(({ theme }) => ({
         color: 'inherit',
-        width: '100%',
         '& .MuiInputBase-input': {
             padding: theme.spacing(1, 1, 1, 0),
             // vertical padding + font size from searchIcon
@@ -55,7 +57,7 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
                     <Link to="/">
                         <Button>Home</Button>
                     </Link>
-                    <Search>
+                    <Search onClick={() => ref.current?.focus()}>
                         <SearchIconWrapper>
                             <SearchIcon />
                         </SearchIconWrapper>
@@ -65,6 +67,7 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
                             }}
                         >
                             <StyledInputBase
+                                inputRef={ref}
                                 name="search"
                                 placeholder="Search…"
                                 inputProps={{ 'aria-label': 'search' }}

@@ -1,10 +1,5 @@
-@mixin button {
-  border: 1px solid red;
-  padding: 10px;
-}
-
 @mixin media-tablet {
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 769px) {
     @content;
   }
 }

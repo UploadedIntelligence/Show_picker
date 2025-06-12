@@ -4,12 +4,9 @@ import {
     getUser,
     logOut,
     logUser,
-    omdbAPI,
     registerUser,
-    searchIMDB,
-    watchMode,
-    youtubeAPI,
 } from './controllers/users.controller';
+import { searchIMDB, watchMode, youtubeAPI, omdbAPI } from './controllers/search.controller'
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -21,7 +18,7 @@ app.get('/user', getUser);
 app.post('/logout', logOut);
 app.post('/register', registerUser);
 app.post('/login', logUser);
-app.post('/search', searchIMDB);
+app.get('/imdb/:search_term', searchIMDB);
 app.get('/youtube/:search_term', youtubeAPI);
 app.get('/omdb/:show_id', omdbAPI);
 app.get('/watchmode/:show_id', watchMode);

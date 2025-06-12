@@ -11,8 +11,8 @@ import {
     Paper,
 } from '@mui/material';
 import { useState } from 'react';
-import axios from './config/client.ts';
 import { type AxiosResponse } from 'axios';
+import { searchYouTube, searchOMDB, searchWatchMode } from '../api/search.ts';
 
 export function SearchResult() {
     const location = useLocation();
@@ -25,13 +25,9 @@ export function SearchResult() {
 
     async function getImdbJSON(search_term: string, show_id: string) {
         const show_sources: string[][] = [];
-        const youtube_response: AxiosResponse<{ items: [{ id: { videoId: string } }] }> = await axios.get(
-            `/youtube/${search_term}`,
-        );
-        const omdb_response: AxiosResponse<{ Plot: string }> = await axios.get(`/omdb/${show_id}`);
-        const watchmode_response: AxiosResponse<{ name: string; web_url: string }[]> = await axios.get(
-            `/watchmode/${show_id}`,
-        );
+        const youtube_response = await searchYouTube(search_term)
+        const omdb_response: AxiosResponse<{ Plot: string }> = await searchOMDB(show_id)
+        const watchmode_response: AxiosResponse<{ name: string; web_url: string }[]> = await searchWatchMode(show_id);
         console.log(watchmode_response);
 
         if (watchmode_response.data.length > 0) {

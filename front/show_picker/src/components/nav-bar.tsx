@@ -1,7 +1,7 @@
 import '../styles/nav-bar.scss';
 import { alpha, AppBar, Button, InputBase, styled, Toolbar } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { searchShow } from '../utilities/searchShow.ts';
+import { searchIMDB } from '../api/search.ts';
 import { isString } from '../utilities/is-string.ts';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useRef } from 'react';
@@ -45,7 +45,7 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
         const form = new FormData(event.currentTarget);
         const search_input = form.get('search');
         if (isString(search_input)) {
-            const result = await searchShow(search_input);
+            const result = await searchIMDB(search_input);
             navigate('/search', { state: result.data });
         }
     }

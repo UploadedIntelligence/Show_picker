@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Alert, Button, TextField, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import axios from './config/client.ts';
+import axios from '../config/client.ts';
 
-function Login({ onSuccessfulLogin }: { onSuccessfulLogin: () => void }) {
+function LoginPage({ onSuccessfulLogin }: { onSuccessfulLogin: () => void }) {
     const navigate = useNavigate();
     const {
         register,
@@ -87,4 +87,4 @@ function Login({ onSuccessfulLogin }: { onSuccessfulLogin: () => void }) {
     );
 }
 
-export { Login };
+export { LoginPage };

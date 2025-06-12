@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from './config/client.ts';
+import axios from '../config/client.ts';
 import { Alert, Button, LinearProgress, TextField, Tooltip, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 
@@ -9,7 +9,7 @@ type RegisterForm = {
     password: string;
 };
 
-function UserRegistration({ onRegister }: { onRegister: () => void }) {
+function UserRegistrationPage({ onRegister }: { onRegister: () => void }) {
     const [strength, setStrength] = useState(0);
     const [isVisible, setIsVisible] = useState(false);
     const [registerStatus, setRegisterStatus] = useState(false);
@@ -18,6 +18,7 @@ function UserRegistration({ onRegister }: { onRegister: () => void }) {
         register,
         trigger,
         watch,
+        setError,
         formState: { errors, dirtyFields, isValid },
     } = useForm<RegisterForm>({
         defaultValues: {
@@ -160,4 +161,4 @@ function UserRegistration({ onRegister }: { onRegister: () => void }) {
     );
 }
 
-export { UserRegistration };
+export { UserRegistrationPage };

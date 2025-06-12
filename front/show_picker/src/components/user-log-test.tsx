@@ -1,7 +1,7 @@
 import { useContext } from 'react';
-import { CurrentUserContext } from './contexts/current-user-context.ts';
+import { CurrentUserContext } from '../contexts/current-user-context.ts';
 
-function MainPage() {
+function UserLogTest() {
     const currentUserContext = useContext(CurrentUserContext);
     const username: string | undefined = currentUserContext?.loggedUser?.username;
 
@@ -13,4 +13,4 @@ function MainPage() {
     );
 }
 
-export { MainPage };
+export { UserLogTest };

@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import './app.css';
-import { MainPage } from './main-page.tsx';
-import { Login } from './login.tsx';
-import { UserRegistration } from './user-registration.tsx';
+import { UserLogTest } from './components/user-log-test.tsx';
+import { LoginPage } from './pages/login-page.tsx';
+import { UserRegistrationPage } from './pages/user-registration-page.tsx';
 import { CurrentUserContext, type ICurrentUserContext } from './contexts/current-user-context.ts';
-import { Logout } from './logout.tsx';
+import { LogoutPage } from './pages/logout-page.tsx';
 import { createTheme } from '@mui/material';
-import { NavBar } from './nav-bar/nav-bar.tsx';
+import { NavBar } from './components/nav-bar.tsx';
 import { ThemeProvider } from '@emotion/react';
 import { green } from '@mui/material/colors';
-import { SearchResult } from './search-result.tsx';
-import { fetchUser } from './utilities/fetchUser.ts';
+import { SearchResult } from './components/search-result.tsx';
+import { user } from './api/user.ts';
 
 function App() {
     const theme = createTheme({
@@ -35,7 +35,7 @@ function App() {
     const [loggedUser, setLoggedUser] = useState<ICurrentUserContext['loggedUser'] | null>(null);
 
     async function initialiseUser() {
-        setLoggedUser((await fetchUser()).user);
+        setLoggedUser((await user()).user);
     }
 
     function logOut() {
@@ -47,10 +47,10 @@ function App() {
             <CurrentUserContext.Provider value={{ loggedUser }}>
                 <NavBar isAuthenticated={!!loggedUser} />
                 <Routes>
-                    <Route path="" element={<MainPage />}></Route>
-                    <Route path="/login" element={<Login onSuccessfulLogin={initialiseUser} />} />
-                    <Route path="/logout" element={<Logout onLogOut={logOut} />} />
-                    <Route path="/register" element={<UserRegistration onRegister={initialiseUser} />} />
+                    <Route path="" element={<UserLogTest />}></Route>
+                    <Route path="/login" element={<LoginPage onSuccessfulLogin={initialiseUser} />} />
+                    <Route path="/logout" element={<LogoutPage onLogOut={logOut} />} />
+                    <Route path="/register" element={<UserRegistrationPage onRegister={initialiseUser} />} />
                     <Route path="/search" element={<SearchResult />} />
                 </Routes>
             </CurrentUserContext.Provider>

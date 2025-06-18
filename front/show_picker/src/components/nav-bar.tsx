@@ -1,10 +1,11 @@
 import '../styles/nav-bar.scss';
 import { alpha, AppBar, Button, InputBase, styled, Toolbar } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { searchIMDB } from '../api/search.ts';
+import { type IIMDBResponse, searchIMDB } from '../api/search.ts';
 import { isString } from '../utilities/is-string.ts';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useRef } from 'react';
+import type { AxiosResponse } from 'axios';
 
 function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
     const navigate = useNavigate();
@@ -45,7 +46,7 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
         const form = new FormData(event.currentTarget);
         const search_input = form.get('search');
         if (isString(search_input)) {
-            const result = await searchIMDB(search_input);
+            const result: AxiosResponse<Array<IIMDBResponse | undefined>> = await searchIMDB(search_input);
             navigate('/search', { state: result.data });
         }
     }

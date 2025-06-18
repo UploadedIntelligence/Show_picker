@@ -1,12 +1,14 @@
 import express from 'express';
 import cors from 'cors';
+import { getUser, logOut, logUser, registerUser } from './controllers/users.controller';
 import {
-    getUser,
-    logOut,
-    logUser,
-    registerUser,
-} from './controllers/users.controller';
-import { searchIMDB, watchMode, youtubeAPI, omdbAPI } from './controllers/search.controller'
+    googleCinema,
+    omdbAPI,
+    searchIMDB,
+    searchMovieGlu,
+    watchMode,
+    youtubeAPI,
+} from './controllers/search.controller';
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -20,8 +22,10 @@ app.post('/register', registerUser);
 app.post('/login', logUser);
 app.get('/imdb/:search_term', searchIMDB);
 app.get('/youtube/:search_term', youtubeAPI);
+app.get('/movieglu/:movie_name/:geo_location', searchMovieGlu);
 app.get('/omdb/:show_id', omdbAPI);
 app.get('/watchmode/:show_id', watchMode);
+app.get('/getCinema/:cinema_query/:geo_location', googleCinema);
 
 app.listen(process.env.APP_PORT, () => {
     console.log(`Now listening port ${process.env.APP_PORT}`);

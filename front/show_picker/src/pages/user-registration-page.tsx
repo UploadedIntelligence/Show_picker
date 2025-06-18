@@ -81,7 +81,7 @@ function UserRegistrationPage({ onRegister }: { onRegister: () => void }) {
                 setRegisterStatus(true);
             })
             .catch((error) => {
-                errors.root = error.response.data;
+                setError(`root.registration_error`, { message: error.response.data });
                 setIsVisible(true);
                 setRegisterStatus(false);
             });
@@ -153,7 +153,7 @@ function UserRegistrationPage({ onRegister }: { onRegister: () => void }) {
                     </Alert>
                 ) : (
                     <Alert severity="error" variant="filled">
-                        {errors.root}
+                        {errors.root?.registration_error.message}
                     </Alert>
                 )
             ) : null}

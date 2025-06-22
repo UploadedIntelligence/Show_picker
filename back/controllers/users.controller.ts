@@ -3,10 +3,8 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { JwtPayload } from 'jwt-decode';
-import axios from 'axios';
 
 const prisma = new PrismaClient();
-
 
 async function registerUser(req: Request, res: Response) {
     const { email, username, password } = req.body;

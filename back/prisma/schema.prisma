@@ -14,14 +14,54 @@ datasource db {
 }
 
 model Users {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  username String?
-  password String
+  id Int @id @default(autoincrement())
+
+  email        String     @unique
+  username     String?
+  password     String
+  watchList    WatchList?
+  groupsMember Group[]    @relation("GroupMembers")
+  groupsOwned  Group[]    @relation("GroupOwner")
+  ratings      Ratings[]
+}
+
+model Group {
+  id Int @id @unique @default(autoincrement())
+
+  watchList    WatchList?
+  owner        Users      @relation("GroupOwner", fields: [ownerId], references: [id])
+  ownerId      Int
+  groupMembers Users[]    @relation("GroupMembers")
 }
 
 model Movies {
-  id       Int    @id @default(autoincrement())
-  name     String @unique
-  imageUrl String
+  id Int @id @default(autoincrement())
+
+  name       String      @unique
+  imageUrl   String
+  watchLists WatchList[]
+  Ratings    Ratings[]
+}
+
+model Ratings {
+  id Int @id @default(autoincrement())
+
+  movie   Movies @relation(fields: [movieId], references: [id])
+  movieId Int
+
+  user   Users @relation(fields: [userId], references: [id])
+  userId Int
+  rate   Int
+
+  @@unique([movieId, userId])
+}
+
+model WatchList {
+  id Int @id @unique @default(autoincrement())
+
+  movies  Movies[]
+  user    Users?   @relation(fields: [userId], references: [id])
+  userId  Int?     @unique
+  group   Group?   @relation(fields: [groupId], references: [id])
+  groupId Int?     @unique
 }

@@ -2,9 +2,9 @@ import { useLocation } from 'react-router-dom';
 import { ImageList, ImageListItem, ListItemButton, Paper } from '@mui/material';
 import { useContext, useState } from 'react';
 import {
-    getMovieGluCinemas,
     type IIMDBResponse,
     searchCinemaUrl,
+    searchMovieGluCinemas,
     searchOMDB,
     searchWatchMode,
     searchYouTube,
@@ -33,7 +33,7 @@ export function SearchResult() {
         const watchmode_response = await searchWatchMode(show_id);
 
         if (is_movie) {
-            const movieGlu_cinemas_response = await getMovieGluCinemas(show_title, geoLocation!);
+            const movieGlu_cinemas_response = await searchMovieGluCinemas(show_title, geoLocation!);
             if (movieGlu_cinemas_response.data) {
                 for (const cinema of movieGlu_cinemas_response.data) {
                     let cinema_url_response = 'Please provide location to display local cinemas airing the movie';

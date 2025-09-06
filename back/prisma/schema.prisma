@@ -13,55 +13,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
-  id Int @id @default(autoincrement())
-
-  email        String     @unique
+model User {
+  id           Int         @id @default(autoincrement())
+  email        String      @unique
   username     String?
   password     String
-  watchList    WatchList?
-  groupsMember Group[]    @relation("GroupMembers")
-  groupsOwned  Group[]    @relation("GroupOwner")
-  ratings      Ratings[]
+  watchList    WatchList[]
+  groupsMember Group[]     @relation("GroupMembers")
+  groupsOwned  Group[]     @relation("GroupOwner")
+  ratings      Rating[]
 }
 
 model Group {
-  id Int @id @unique @default(autoincrement())
-
-  watchList    WatchList?
-  owner        Users      @relation("GroupOwner", fields: [ownerId], references: [id])
-  ownerId      Int
-  groupMembers Users[]    @relation("GroupMembers")
+  id          Int        @id @unique @default(autoincrement())
+  watchList   WatchList?
+  owner       User       @relation("GroupOwner", fields: [ownerId], references: [id])
+  ownerId     Int
+  groupMember User[]     @relation("GroupMembers")
 }
 
-model Movies {
-  id Int @id @default(autoincrement())
-
-  name       String      @unique
+model Show {
+  id         Int               @id @default(autoincrement())
+  name       String
+  year       String
+  actors     String
   imageUrl   String
-  watchLists WatchList[]
-  Ratings    Ratings[]
+  watchLists ShowOnWatchList[]
+  Ratings    Rating[]
 }
 
-model Ratings {
-  id Int @id @default(autoincrement())
-
-  movie   Movies @relation(fields: [movieId], references: [id])
-  movieId Int
-
-  user   Users @relation(fields: [userId], references: [id])
+model Rating {
+  show   Show @relation(fields: [showId], references: [id])
+  showId Int
+  user   User @relation(fields: [userId], references: [id])
   userId Int
-  rate   Int
+  rating Int
 
-  @@unique([movieId, userId])
+  @@unique([showId, userId])
 }
 
 model WatchList {
-  id Int @id @unique @default(autoincrement())
+  id      Int               @id @unique @default(autoincrement())
+  name    String
+  shows   ShowOnWatchList[]
+  user    User?             @relation(fields: [userId], references: [id])
+  userId  Int?
+  group   Group?            @relation(fields: [groupId], references: [id])
+  groupId Int?              @unique
+}
 
-  movies  Movies[]
-  user    Users?   @relation(fields: [userId], references: [id])
-  userId  Int?     @unique
-  group   Group?   @relation(fields: [groupId], references: [id])
-  groupId Int?     @unique
+model ShowOnWatchList {
+  watchList   WatchList @relation(fields: [watchListId], references: [id])
+  watchListId Int
+  show        Show      @relation(fields: [showId], references: [id])
+  showId      Int
+  added       DateTime  @default(now())
+
+  @@unique([watchListId, showId])
 }

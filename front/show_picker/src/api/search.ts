@@ -23,7 +23,7 @@ interface IWatchModeResponse {
     web_url: string;
 }
 
-async function getMovieGluCinemas(movieName: string, geoLocation: string) {
+async function searchMovieGluCinemas(movieName: string, geoLocation: string) {
     return await axios
         .get(`/movieglu/${movieName}/${geoLocation}`)
         .then((response) => response)
@@ -51,7 +51,7 @@ async function searchWatchMode(show_id: string): Promise<AxiosResponse<Array<IWa
 }
 
 export {
-    getMovieGluCinemas,
+    searchMovieGluCinemas,
     searchCinemaUrl,
     searchIMDB,
     searchYouTube,

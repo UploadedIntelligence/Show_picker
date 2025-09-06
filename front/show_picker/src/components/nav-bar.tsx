@@ -53,7 +53,7 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
 
     return (
         <AppBar className="NavBar-main" position="static">
-            <Toolbar className="NavBar-toolbar" variant="dense" sx={{ display: 'inline', minHeight: 0 }}>
+            <Toolbar variant="dense" sx={{ display: 'inline', minHeight: 0 }}>
                 <div className="NavBar-content">
                     <Link to="/">
                         <Button>Home</Button>
@@ -75,10 +75,15 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
                             />
                         </form>
                     </Search>
-                    <Button className="NavBar-button">Most popular</Button>
-                    <Button>User picks</Button>
+                    <Button>Top picks</Button>
                     {isAuthenticated ? (
                         <>
+                            <Link to="/groups">
+                                <Button>Groups</Button>
+                            </Link>
+                            <Link to="/watchlist">
+                                <Button>Watch Lists</Button>
+                            </Link>
                             <Button>Profile</Button>
                             <Link to="/logout">
                                 <Button>Log out</Button>

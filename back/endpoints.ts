@@ -1,6 +1,13 @@
 import express from 'express';
 import cors from 'cors';
-import { getUser, logOut, logUser, registerUser } from './controllers/users.controller';
+import {
+    createWatchList,
+    getUser,
+    getUserWatchLists,
+    logOut,
+    logUser,
+    registerUser,
+} from './controllers/users.controller';
 import {
     googleCinema,
     omdbAPI,
@@ -17,6 +24,8 @@ app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.get('/user', getUser);
+app.get('/watchlist', getUserWatchLists);
+app.post('/watchlist', createWatchList);
 app.post('/logout', logOut);
 app.post('/register', registerUser);
 app.post('/login', logUser);

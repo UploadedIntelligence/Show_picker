@@ -13,6 +13,7 @@ import { green } from '@mui/material/colors';
 import { SearchResult } from './components/search-result.tsx';
 import { fetchUser } from './api/fetchUser.ts';
 import { GeoLocationContext } from './contexts/geo-location-context.ts';
+import { WatchLists } from './pages/watch-lists.tsx';
 
 function App() {
     const theme = createTheme({
@@ -62,6 +63,7 @@ function App() {
                         <Route path="/logout" element={<LogoutPage onLogOut={logOut} />} />
                         <Route path="/register" element={<UserRegistrationPage onRegister={initialiseUser} />} />
                         <Route path="/search" element={<SearchResult />} />
+                        <Route path="/watchlist" element={<WatchLists />} />
                     </Routes>
                 </CurrentUserContext.Provider>
             </GeoLocationContext.Provider>

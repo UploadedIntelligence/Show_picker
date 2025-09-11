@@ -1,7 +1,4 @@
 import { createContext } from 'react';
+import { type ILoggedUser } from '../utilities/types'
 
-export interface ICurrentUserContext {
-    loggedUser: { username: string; email: string; id: number } | null;
-}
-
-export const CurrentUserContext = createContext<ICurrentUserContext | undefined>(undefined);
+export const CurrentUserContext = createContext<ILoggedUser | null>(null);

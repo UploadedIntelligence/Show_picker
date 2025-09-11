@@ -9,8 +9,23 @@ type WatchListForm = {
     name: string;
 };
 
+type Show = {
+    id: number;
+    name: string;
+    url: string;
+}
+
+type WatchList = {
+    id: number;
+    name: string;
+    shows: Array<Show>;
+
+}
+
 export function WatchLists() {
     const [isVisible, setIsVisible] = useState<boolean>(false);
+    const [userLists, setUserLists] = useState<Array<WatchList> | null>(null);
+    const [viewUserLists, setUserViewLists] = useState<boolean>(false);
 
     const {
         register,
@@ -29,17 +44,18 @@ export function WatchLists() {
         async function viewLists() {
             return await axios
                 .get('/watchlist', { withCredentials: true })
-                .then((res) => console.log(res.data))
+                .then((res) => setUserLists(res.data))
                 .catch((err) => err.message);
         }
         viewLists();
     }, []);
-    async function viewLists() {
-        return await axios
-            .get('/watchlist', { withCredentials: true })
-            .then((res) => console.log(res.data))
-            .catch((err) => err.message);
-    }
+
+    // async function viewLists() {
+    //     return await axios
+    //         .get('/watchlist', { withCredentials: true })
+    //         .then((res) => console.log(res.data))
+    //         .catch((err) => err.message);
+    // }
 
     async function newWatchList(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -72,7 +88,7 @@ export function WatchLists() {
     return (
         <div className="register" style={{ width: '100%' }}>
             <Button onClick={() => setIsVisible(!isVisible)}>Create a watch list</Button>
-            {isVisible ? (
+            {isVisible ?
                 <form
                     onSubmit={(event) => {
                         newWatchList(event);
@@ -92,10 +108,24 @@ export function WatchLists() {
                         })}
                     />
                 </form>
-            ) : (
-                []
-            )}
-            <Button onClick={viewLists}>viewLists</Button>
+             : []
+            }
+            <Button onClick={() => setUserViewLists(!viewUserLists)}>viewLists</Button>
+            {
+                viewUserLists ?
+                    (
+                        <div>{userLists ? userLists[0].name : []}</div>
+                    )
+                    // userLists.map((list) => {
+                    //     return (
+                    //     <div>
+                    //         <p>
+                    //             '111'
+                    //         </p>
+                    //     </div>)
+                    // })
+                 : []
+            }
             <DataGrid rows={rows} columns={columns} />
         </div>
     );

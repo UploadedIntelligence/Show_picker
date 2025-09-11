@@ -10,9 +10,9 @@ type RegisterForm = {
 };
 
 function UserRegistrationPage({ onRegister }: { onRegister: () => void }) {
-    const [strength, setStrength] = useState(0);
-    const [isVisible, setIsVisible] = useState(false);
-    const [registerStatus, setRegisterStatus] = useState(false);
+    const [strength, setStrength] = useState<number>(0);
+    const [isVisible, setIsVisible] = useState<boolean>(false);
+    const [registerStatus, setRegisterStatus] = useState<boolean>(false);
 
     const {
         register,

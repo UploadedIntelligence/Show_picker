@@ -69,13 +69,17 @@ async function logUser(req: Request, res: Response) {
 }
 
 function getUser(req: Request, res: Response) {
-    const user_token: string = req.cookies.user;
-    try {
-        const user = jwt.verify(user_token, process.env.JWT_SECRET!) as IUser;
-        console.log('result', user.id);
-        res.status(200).json({ user });
-    } catch (err) {
-        res.status(404).json({ message: 'User token expired, please log in again' });
+    if (req.cookies.user === undefined) {
+        res.status(200).json(null)
+    } else {
+        const user_token: string = req.cookies.user;
+        try {
+            const user = jwt.verify(user_token, process.env.JWT_SECRET!) as IUser;
+            console.log('result', user.id);
+            res.status(200).json(user);
+        } catch (err) {
+            res.status(404).json({ message: 'Session expired, please log in again' });
+        }
     }
 }
 

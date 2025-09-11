@@ -1,7 +1,8 @@
-export interface ILoggedUser {
-    user: {
+export type ILoggedUser =
+    | {
         username: string;
         email: string;
         id: number;
-    };
-}
+    }
+    | null;
+

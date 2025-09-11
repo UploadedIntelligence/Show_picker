@@ -93,7 +93,8 @@ export function SearchResult() {
                               );
                           }
                       })
-                    : []}
+                    : []
+                }
             </ImageList>
             <SearchResultDialog
                 open={open}

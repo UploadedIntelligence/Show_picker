@@ -1,26 +1,16 @@
 import type { GridColDef } from '@mui/x-data-grid';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
-import { Button, TextField } from '@mui/material';
+import {Box, Button, IconButton, TextField } from '@mui/material';
 import axios from '../config/client.ts';
 import { useForm } from 'react-hook-form';
+import { fetchUserWatchLists } from "../api/fetchUserWatchLists.ts";
+import type { WatchList } from "../utilities/types.tsx";
+import {Delete, Edit } from "@mui/icons-material";
 
 type WatchListForm = {
     name: string;
 };
-
-type Show = {
-    id: number;
-    name: string;
-    url: string;
-}
-
-type WatchList = {
-    id: number;
-    name: string;
-    shows: Array<Show>;
-
-}
 
 export function WatchLists() {
     const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -50,12 +40,10 @@ export function WatchLists() {
         viewLists();
     }, []);
 
-    // async function viewLists() {
-    //     return await axios
-    //         .get('/watchlist', { withCredentials: true })
-    //         .then((res) => console.log(res.data))
-    //         .catch((err) => err.message);
-    // }
+    async function viewLists() {
+        setUserViewLists(!viewUserLists)
+        return setUserLists(await fetchUserWatchLists())
+    }
 
     async function newWatchList(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -86,7 +74,7 @@ export function WatchLists() {
 
 
     return (
-        <div className="register" style={{ width: '100%' }}>
+        <Box className="register" style={{ width: '100%' }}>
             <Button onClick={() => setIsVisible(!isVisible)}>Create a watch list</Button>
             {isVisible ?
                 <form
@@ -110,23 +98,26 @@ export function WatchLists() {
                 </form>
              : []
             }
-            <Button onClick={() => setUserViewLists(!viewUserLists)}>viewLists</Button>
+            <Button onClick={viewLists}>viewLists</Button>
             {
                 viewUserLists ?
-                    (
-                        <div>{userLists ? userLists[0].name : []}</div>
-                    )
-                    // userLists.map((list) => {
-                    //     return (
-                    //     <div>
-                    //         <p>
-                    //             '111'
-                    //         </p>
-                    //     </div>)
-                    // })
+                    <Box sx={{ display: 'inline-table' }}>
+                       { userLists!.map((list: WatchList, index: number) => {
+                        return (
+                        <Button key={list.id} sx={{ color: '#0b929b', justifyContent: 'space-between' }}>
+                            {index + 1}. {list.name}
+                            <IconButton sx={{mr: 1, ml: 1}}>
+                                <Edit/>
+                            </IconButton>
+                            <IconButton>
+                                <Delete/>
+                            </IconButton>
+                        </Button>)
+                        })}
+                    </Box>
                  : []
             }
             <DataGrid rows={rows} columns={columns} />
-        </div>
+        </Box>
     );
 }

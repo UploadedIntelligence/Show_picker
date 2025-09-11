@@ -6,3 +6,15 @@ export type ILoggedUser =
     }
     | null;
 
+export type Show = {
+    id: number;
+    name: string;
+    url: string;
+}
+
+export type WatchList = {
+    id: number;
+    name: string;
+    shows?: Array<Show>;
+}
+

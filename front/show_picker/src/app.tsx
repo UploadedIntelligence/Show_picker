@@ -33,7 +33,7 @@ function App({ userOrGuest } : { userOrGuest: ILoggedUser }) {
             },
         },
     });
-    console.log(userOrGuest)
+
     const [loggedUser, setLoggedUser] = useState<ILoggedUser>(userOrGuest);
     const [geoLocation, setGeoLocation] = useState<string | null>(null);
 

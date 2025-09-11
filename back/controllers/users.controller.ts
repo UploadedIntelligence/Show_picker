@@ -85,7 +85,6 @@ function getUser(req: Request, res: Response) {
 
 async function getUserWatchLists(req: Request, res: Response) {
     const user_token = req.cookies.user;
-    console.log('in server');
     try {
         const user = jwt.verify(user_token, process.env.JWT_SECRET!) as IUser;
         const watch_lists = await prisma.watchList.findMany({
@@ -93,8 +92,7 @@ async function getUserWatchLists(req: Request, res: Response) {
                 userId: user.id,
             },
         });
-
-        res.status(200).json({ watch_lists });
+        res.status(200).json(watch_lists);
     } catch (err) {
         res.status(404).json({ message: 'User token expired, please log in again' });
     }
@@ -103,8 +101,6 @@ async function getUserWatchLists(req: Request, res: Response) {
 async function createWatchList(req: Request, res: Response) {
     const user_token = req.cookies.user;
     const { list_name } = req.body;
-    console.log(list_name);
-    console.log('creating...', user_token);
 
     try {
         const user = jwt.verify(user_token, process.env.JWT_SECRET!) as IUser;
@@ -115,7 +111,6 @@ async function createWatchList(req: Request, res: Response) {
                 userId: user.id,
             },
         });
-        console.log(new_list, 'created');
         res.status(200).json({ new_list });
     } catch (err) {
         res.status(404).json({ message: 'User token expired, please log in again' });

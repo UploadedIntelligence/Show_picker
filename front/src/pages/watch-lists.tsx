@@ -53,6 +53,10 @@ export function WatchLists() {
             .catch((err) => err.message);
     }
 
+    async function askToDelete() {
+
+    }
+
     const initialRows = [
         { id: 1, name: 'Severance', year: 2023 },
         { id: 2, name: 'Silo', year: 2018 },
@@ -109,7 +113,7 @@ export function WatchLists() {
                             <IconButton sx={{mr: 1, ml: 1}}>
                                 <Edit/>
                             </IconButton>
-                            <IconButton>
+                            <IconButton onClick={askToDelete}>
                                 <Delete/>
                             </IconButton>
                         </Button>)

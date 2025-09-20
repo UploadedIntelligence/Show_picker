@@ -60,8 +60,10 @@ export function SearchResultDialog({
                 <TableContainer>
                     <Table>
                         <TableHead>
-                            <TableCell>Where to watch:</TableCell>
-                            <TableCell>Cinemas:</TableCell>
+                            <TableRow>
+                                <TableCell>Where to watch:</TableCell>
+                                <TableCell>Cinemas:</TableCell>
+                            </TableRow>
                         </TableHead>
                         <TableBody>
                             <TableRow>
@@ -69,13 +71,9 @@ export function SearchResultDialog({
                                     {sources ? (
                                         sources.map((source, idx) => {
                                             return (
-                                                <TableRow key={idx}>
-                                                    <TableCell sx={{ padding: '8px' }}>
-                                                        <a href={source.web_url}>
-                                                            <Button>{source.name}</Button>
-                                                        </a>
-                                                    </TableCell>
-                                                </TableRow>
+                                                <a key={idx} href={source.web_url}>
+                                                    <Button>{source.name}</Button>
+                                                </a>
                                             );
                                         })
                                     ) : (
@@ -84,13 +82,9 @@ export function SearchResultDialog({
                                 </TableCell>
                                 <TableCell sx={{ padding: 0, verticalAlign: 'top' }}>
                                     {cinemas
-                                        ? cinemas.map((cinema) => {
+                                        ? cinemas.map((cinema, idx) => {
                                               return (
-                                                  <TableRow>
-                                                      <TableCell>
-                                                          <a href={cinema.cinema_url}>{cinema.cinema_name}</a>
-                                                      </TableCell>
-                                                  </TableRow>
+                                                  <a key={idx} href={cinema.cinema_url}>{cinema.cinema_name}</a>
                                               );
                                           })
                                         : []}

@@ -47,7 +47,7 @@ export function SearchResult() {
         }
 
         if (watchmode_response.data && watchmode_response.data.length > 0) {
-            let known_sources: { [key: string]: number } = {};
+            const known_sources: { [key: string]: number } = {};
             for (const source of watchmode_response.data) {
                 if (!known_sources[source.name]) {
                     show_sources.push({ name: source.name, web_url: source.web_url });
